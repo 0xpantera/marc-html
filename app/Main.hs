@@ -30,4 +30,7 @@ myBooks = [book1,book2,book3]
 
 
 main :: IO ()
-main = TIO.writeFile "books.html" (booksToHtml myBooks)
+main = do
+  marcData <- B.readFile "sample.mrc"
+  let marcRecords = allRecords marcData
+  print (length marcRecords)

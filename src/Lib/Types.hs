@@ -15,3 +15,7 @@ data Book = Book {
   title :: Title } deriving Show
 
 type Html = T.Text
+
+type MarcRecordRaw = B.ByteString
+type MarcLeaderRaw = B.ByteString
+
