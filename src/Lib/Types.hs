@@ -19,3 +19,9 @@ type Html = T.Text
 type MarcRecordRaw = BS.ByteString
 type MarcLeaderRaw = BS.ByteString
 type MarcDirectoryRaw = BS.ByteString
+type MarcDirectoryEntryRaw = BS.ByteString
+
+data FieldMetadata = FieldMetadata {
+  tag :: T.Text,
+  fieldLength :: Int,
+  fieldStart :: Int } deriving Show

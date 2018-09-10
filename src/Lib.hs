@@ -68,4 +68,27 @@ getDirectory record = BS.take directoryLength afterLeader
   where directoryLength = getDirectoryLength record
         afterLeader = BS.drop leaderLength record
 
-        
+
+dirEntryLength :: Int
+dirEntryLength = 12
+
+splitDirectory :: MarcDirectoryRaw -> [MarcDirectoryEntryRaw]
+splitDirectory directory = if directory == BS.empty
+                           then []
+                           else nextEntry : splitDirectory restEntries
+  where (nextEntry, restEntries) = BS.splitAt dirEntryLength directory
+
+
+makeFieldMetadata :: MarcDirectoryEntryRaw -> FieldMetadata
+makeFieldMetadata entry = FieldMetadata textTag theLength theStart
+  where (theTag,rest) = BS.splitAt 3 entry
+        textTag = E.decodeUtf8 theTag
+        (rawLength,rawStart) = BS.splitAt 4 rest
+        theLength = rawToInt rawLength
+        theStart = rawToInt rawStart
+
+
+getFieldMetadata :: [MarcDirectoryEntryRaw] -> [FieldMetadata]
+getFieldMetadata rawEntries = map makeFieldMetadata rawEntries
+
+
