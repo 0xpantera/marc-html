@@ -92,3 +92,59 @@ getFieldMetadata :: [MarcDirectoryEntryRaw] -> [FieldMetadata]
 getFieldMetadata rawEntries = map makeFieldMetadata rawEntries
 
 
+getTextField :: MarcRecordRaw -> FieldMetadata -> FieldText
+getTextField record fieldMetadata = E.decodeUtf8 byteStringValue
+  where recordLength = getRecordLength record
+        baseAddress = getBaseAddress record
+        baseRecord = BS.drop baseAddress record
+        baseAtEntry = BS.drop (fieldStart fieldMetadata) baseRecord
+        byteStringValue = BS.take (fieldLength fieldMetadata) baseAtEntry
+
+
+fieldDelimiter :: Char
+fieldDelimiter = toEnum 31
+
+titleTag :: T.Text
+titleTag = "245"
+
+titleSubfield :: Char
+titleSubfield = 'a'
+
+authorTag :: T.Text
+authorTag = "100"
+
+authorSubfield :: Char
+authorSubfield = 'a'
+
+
+lookupFieldMetadata :: T.Text -> MarcRecordRaw -> Maybe FieldMetadata
+lookupFieldMetadata aTag record = if length results < 1
+                                  then Nothing
+                                  else Just (head results)
+  where metadata = (getFieldMetadata . splitDirectory . getDirectory) record
+        results = filter ((== aTag) . tag) metadata
+
+
+lookupSubfield :: (Maybe FieldMetadata) -> Char ->
+                  MarcRecordRaw -> Maybe T.Text
+lookupSubfield Nothing subfield record = Nothing
+lookupSubfield (Just fieldMetadata) subfield record =
+    if results == []
+    then Nothing
+    else Just ((T.drop 1 . head) results)
+  where rawField = getTextField record fieldMetadata
+        subfields = T.split (== fieldDelimiter) rawField
+        results = filter ((== subfield) . T.head) subfields
+
+
+lookupValue :: T.Text -> Char -> MarcRecordRaw -> Maybe T.Text
+lookupValue aTag subfield record = lookupSubfield entryMetadata
+                                                  subfield record
+  where entryMetadata = lookupFieldMetadata aTag record
+
+
+lookupTitle :: MarcRecordRaw -> Maybe Title
+lookupTitle = lookupValue titleTag titleSubfield
+
+lookupAuthor :: MarcRecordRaw -> Maybe Author
+lookupAuthor = lookupValue authorTag authorSubfield

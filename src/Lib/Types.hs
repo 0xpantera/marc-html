@@ -25,3 +25,5 @@ data FieldMetadata = FieldMetadata {
   tag :: T.Text,
   fieldLength :: Int,
   fieldStart :: Int } deriving Show
+
+type FieldText = T.Text
