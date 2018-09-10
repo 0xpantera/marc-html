@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib
-    ( someFunc
+    ( booksToHtml
     ) where
 
 import qualified Data.ByteString as BS
@@ -9,15 +9,13 @@ import qualified Data.Text.IO as TIO
 import qualified Data.Text.Encoding as E
 import Data.Maybe
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
 
 type Author = T.Text
 type Title = T.Text
 
 data Book = Book {
   author :: Author,
-  tile :: Title } deriving Show
+  title :: Title } deriving Show
 
 type Html = T.Text
 
@@ -45,4 +43,19 @@ book3 :: Book
 book3 = Book {
   title = "The Tears of Eros",
   author = "Bataille, Georges" }
-        
+
+myBooks :: [Book]
+myBooks = [book1,book2,book3]
+
+booksToHtml :: [Book] -> Html
+booksToHtml books = mconcat ["<html>\n",
+                             "<head><title>books</title>",
+                             "<meta charset='utf-8'/>",
+                             "</head>\n",
+                             "<body>\n",
+                             booksHtml,
+                             "\n</body>\n",
+                             "</html>"]
+  where booksHtml = (mconcat . (map bookToHtml)) books
+                             
+                             
