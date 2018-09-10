@@ -16,6 +16,6 @@ data Book = Book {
 
 type Html = T.Text
 
-type MarcRecordRaw = B.ByteString
-type MarcLeaderRaw = B.ByteString
-
+type MarcRecordRaw = BS.ByteString
+type MarcLeaderRaw = BS.ByteString
+type MarcDirectoryRaw = BS.ByteString

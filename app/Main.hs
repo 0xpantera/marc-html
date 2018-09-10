@@ -31,6 +31,6 @@ myBooks = [book1,book2,book3]
 
 main :: IO ()
 main = do
-  marcData <- B.readFile "sample.mrc"
+  marcData <- BS.readFile "sample.mrc"
   let marcRecords = allRecords marcData
   print (length marcRecords)
