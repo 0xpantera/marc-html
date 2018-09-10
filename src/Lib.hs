@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib
-    ( booksToHtml
-    , allRecords
+    ( processRecords
     ) where
 
 import Lib.Types
@@ -148,3 +147,22 @@ lookupTitle = lookupValue titleTag titleSubfield
 
 lookupAuthor :: MarcRecordRaw -> Maybe Author
 lookupAuthor = lookupValue authorTag authorSubfield
+
+
+marcToPairs :: BS.ByteString -> [(Maybe Title, Maybe Author)]
+marcToPairs marcStream = zip titles authors
+  where records = allRecords marcStream
+        titles = map lookupTitle records
+        authors = map lookupAuthor records
+
+
+pairsToBooks :: [(Maybe Title, Maybe Author)] -> [Book]
+pairsToBooks pairs = map (\(title, author) -> Book {
+                             title = fromJust title,
+                             author = fromJust author}) justPairs
+  where justPairs = filter (\(title,author) -> isJust title
+                                               && isJust author) pairs
+
+
+processRecords :: Int -> BS.ByteString -> Html
+processRecords n = booksToHtml . pairsToBooks . (take n) . marcToPairs

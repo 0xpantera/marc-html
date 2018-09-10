@@ -32,5 +32,5 @@ myBooks = [book1,book2,book3]
 main :: IO ()
 main = do
   marcData <- BS.readFile "sample.mrc"
-  let marcRecords = allRecords marcData
-  print (length marcRecords)
+  let processed = processRecords 500 marcData
+  TIO.writeFile "books.html" processed
