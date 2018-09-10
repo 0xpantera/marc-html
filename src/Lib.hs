@@ -29,3 +29,20 @@ bookToHtml book = mconcat ["<p>\n",
                            "</p>\n"]
   where titleInTags = mconcat ["<strong>", (title book), "</strong>\n"]
         authorInTags = mconcat ["<em>", (author book), "</em>\n"]
+
+
+book1 :: Book
+book1 = Book {
+  title = "The Conspiracy Against the Human Race",
+  author = "Ligotti, Thomas" }
+
+book2 :: Book
+book2 = Book {
+  title = "A Short History of Decay",
+  author = "Cioran, Emil" }
+
+book3 :: Book
+book3 = Book {
+  title = "The Tears of Eros",
+  author = "Bataille, Georges" }
+        
